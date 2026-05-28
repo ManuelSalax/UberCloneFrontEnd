@@ -1,23 +1,38 @@
-import { Image } from 'expo-image';
-import { SymbolView } from 'expo-symbols';
-import { Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
+import React from 'react';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+  useColorScheme,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '../components/themed-text';
+import { ThemedView } from '../components/themed-view';
+import { Collapsible } from '../components/ui/collapsible';
+import { BottomTabInset, MaxContentWidth, Spacing, Colors } from '../constants/theme';
+import { useTheme } from '../hooks/use-theme';
 
-import { ExternalLink } from '@/components/external-link';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Collapsible } from '@/components/ui/collapsible';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
-
-export default function TabTwoScreen() {
+export default function ExploreScreen() {
   const safeAreaInsets = useSafeAreaInsets();
   const insets = {
     ...safeAreaInsets,
     bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
   };
   const theme = useTheme();
+  const scheme = useColorScheme();
+  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
+
+  const services = [
+    { id: '1', title: 'UberX', desc: 'Viajes cotidianos asequibles', icon: 'car-outline' },
+    { id: '2', title: 'Uber Comfort', desc: 'Autos nuevos con choferes top', icon: 'sparkles-outline' },
+    { id: '3', title: 'Uber Black', desc: 'Vehículos de lujo prémium', icon: 'ribbon-outline' },
+    { id: '4', title: 'Uber Flash / Envío', desc: 'Envía paquetes en minutos', icon: 'paper-plane-outline' },
+    { id: '5', title: 'Uber Moto', desc: 'Esquiva el tráfico rápido', icon: 'bicycle-outline' },
+    { id: '6', title: 'Reserva anticipada', desc: 'Agenda viajes hasta con 30 días', icon: 'time-outline' },
+  ];
 
   const contentPlatformStyle = Platform.select({
     android: {
@@ -30,96 +45,100 @@ export default function TabTwoScreen() {
       paddingTop: Spacing.six,
       paddingBottom: Spacing.four,
     },
+    ios: {
+      paddingTop: insets.top,
+      paddingBottom: insets.bottom,
+    }
   });
 
   return (
     <ScrollView
       style={[styles.scrollView, { backgroundColor: theme.background }]}
       contentInset={insets}
-      contentContainerStyle={[styles.contentContainer, contentPlatformStyle]}>
+      contentContainerStyle={[styles.contentContainer, contentPlatformStyle]}
+      showsVerticalScrollIndicator={false}
+    >
       <ThemedView style={styles.container}>
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText type="subtitle">Explore</ThemedText>
-          <ThemedText style={styles.centerText} themeColor="textSecondary">
-            This starter app includes example{'\n'}code to help you get started.
+        {/* Title Header */}
+        <View style={styles.titleContainer}>
+          <ThemedText type="subtitle" style={styles.mainTitle}>
+            Explorar Servicios
           </ThemedText>
+          <ThemedText themeColor="textSecondary" style={styles.mainDesc}>
+            Encuentra todos los servicios de transporte, logística y beneficios exclusivos que Uber Clone tiene para ti.
+          </ThemedText>
+        </View>
 
-          <ExternalLink href="https://docs.expo.dev" asChild>
-            <Pressable style={({ pressed }) => pressed && styles.pressed}>
-              <ThemedView type="backgroundElement" style={styles.linkButton}>
-                <ThemedText type="link">Expo documentation</ThemedText>
-                <SymbolView
-                  tintColor={theme.text}
-                  name={{ ios: 'arrow.up.right.square', android: 'link', web: 'link' }}
-                  size={12}
-                />
-              </ThemedView>
-            </Pressable>
-          </ExternalLink>
-        </ThemedView>
-
-        <ThemedView style={styles.sectionsWrapper}>
-          <Collapsible title="File-based routing">
-            <ThemedText type="small">
-              This app has two screens: <ThemedText type="code">src/app/index.tsx</ThemedText> and{' '}
-              <ThemedText type="code">src/app/explore.tsx</ThemedText>
-            </ThemedText>
-            <ThemedText type="small">
-              The layout file in <ThemedText type="code">src/app/_layout.tsx</ThemedText> sets up
-              the tab navigator.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/router/introduction">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
-
-          <Collapsible title="Android, iOS, and web support">
-            <ThemedView type="backgroundElement" style={styles.collapsibleContent}>
-              <ThemedText type="small">
-                You can open this project on Android, iOS, and the web. To open the web version,
-                press <ThemedText type="smallBold">w</ThemedText> in the terminal running this
-                project.
+        {/* Promo Banner Card */}
+        <ThemedView type="backgroundElement" style={styles.promoCard}>
+          <View style={styles.promoContent}>
+            <View style={styles.promoBadge}>
+              <ThemedText style={styles.promoBadgeText} type="smallBold">
+                PROMO
               </ThemedText>
-              <Image
-                source={require('@/assets/images/tutorial-web.png')}
-                style={styles.imageTutorial}
-              />
-            </ThemedView>
-          </Collapsible>
-
-          <Collapsible title="Images">
-            <ThemedText type="small">
-              For static images, you can use the <ThemedText type="code">@2x</ThemedText> and{' '}
-              <ThemedText type="code">@3x</ThemedText> suffixes to provide files for different
-              screen densities.
+            </View>
+            <ThemedText type="smallBold" style={styles.promoTitle}>
+              Consigue 20% de descuento en tu primer viaje Comfort
             </ThemedText>
-            <Image source={require('@/assets/images/react-logo.png')} style={styles.imageReact} />
-            <ExternalLink href="https://reactnative.dev/docs/images">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
-
-          <Collapsible title="Light and dark mode components">
-            <ThemedText type="small">
-              This template has light and dark mode support. The{' '}
-              <ThemedText type="code">useColorScheme()</ThemedText> hook lets you inspect what the
-              user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
+            <ThemedText type="small" themeColor="textSecondary" style={styles.promoDesc}>
+              Viaja en vehículos espaciosos y silenciosos con conductores altamente calificados.
             </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
-
-          <Collapsible title="Animations">
-            <ThemedText type="small">
-              This template includes an example of an animated component. The{' '}
-              <ThemedText type="code">src/components/ui/collapsible.tsx</ThemedText> component uses
-              the powerful <ThemedText type="code">react-native-reanimated</ThemedText> library to
-              animate opening this hint.
-            </ThemedText>
-          </Collapsible>
+          </View>
+          <View style={[styles.promoIconBg, { backgroundColor: colors.text }]}>
+            <Ionicons name="sparkles" size={24} color={colors.background} />
+          </View>
         </ThemedView>
-        {Platform.OS === 'web' && <WebBadge />}
+
+        {/* Services List / Grid */}
+        <ThemedText type="smallBold" style={styles.sectionHeader}>
+          Todos los servicios
+        </ThemedText>
+
+        <View style={styles.servicesGrid}>
+          {services.map((service) => (
+            <ThemedView
+              key={service.id}
+              type="backgroundElement"
+              style={styles.serviceCard}
+            >
+              <View style={[styles.serviceIconContainer, { backgroundColor: colors.background }]}>
+                <Ionicons name={service.icon as any} size={24} color={colors.text} />
+              </View>
+              <View style={styles.serviceTextContainer}>
+                <ThemedText type="smallBold">{service.title}</ThemedText>
+                <ThemedText style={styles.serviceDesc} themeColor="textSecondary">
+                  {service.desc}
+                </ThemedText>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
+            </ThemedView>
+          ))}
+        </View>
+
+        {/* Dynamic Interactive Collapsibles */}
+        <ThemedText type="smallBold" style={styles.sectionHeader}>
+          Preguntas frecuentes y Seguridad
+        </ThemedText>
+
+        <View style={styles.sectionsWrapper}>
+          <Collapsible title="¿Cómo reservo un viaje con anticipación?">
+            <ThemedText type="small" style={styles.collapsibleText}>
+              Puedes agendar un viaje seleccionando el icono de &quot;Reservar&quot; en la pantalla de inicio. Configura tu fecha y hora de salida hasta con 30 días de anticipación. Te asignaremos un conductor prioritario y te notificaremos cuando esté en camino.
+            </ThemedText>
+          </Collapsible>
+
+          <Collapsible title="Medidas de seguridad durante tus viajes">
+            <ThemedText type="small" style={styles.collapsibleText}>
+              Tu seguridad es nuestra prioridad. Cada viaje incluye herramientas integradas como: compartir tu viaje con contactos de confianza en tiempo real, verificación por PIN de 4 dígitos para asegurar que abordas el auto correcto, y acceso directo a asistencia de emergencia.
+            </ThemedText>
+          </Collapsible>
+
+          <Collapsible title="Ventajas de la suscripción Uber One">
+            <ThemedText type="small" style={styles.collapsibleText}>
+              Con Uber One, disfrutas de entregas sin costo de envío en pedidos seleccionados de restaurantes y supermercados, hasta un 5% de descuento en viajes de Uber calificados, y soporte prioritario 24/7 con los conductores mejores valorados de la red.
+            </ThemedText>
+          </Collapsible>
+        </View>
       </ThemedView>
     </ScrollView>
   );
@@ -136,45 +155,95 @@ const styles = StyleSheet.create({
   container: {
     maxWidth: MaxContentWidth,
     flexGrow: 1,
+    paddingHorizontal: Spacing.four,
+    gap: Spacing.three,
   },
   titleContainer: {
-    gap: Spacing.three,
-    alignItems: 'center',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.six,
-  },
-  centerText: {
-    textAlign: 'center',
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-  linkButton: {
-    flexDirection: 'row',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.two,
-    borderRadius: Spacing.five,
-    justifyContent: 'center',
     gap: Spacing.one,
+    paddingVertical: Spacing.three,
+  },
+  mainTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+  },
+  mainDesc: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  promoCard: {
+    flexDirection: 'row',
+    padding: Spacing.three,
+    borderRadius: 16,
     alignItems: 'center',
+    gap: Spacing.three,
+    marginVertical: Spacing.one,
+  },
+  promoContent: {
+    flex: 1,
+    gap: Spacing.one,
+  },
+  promoBadge: {
+    backgroundColor: '#FF3D00',
+    alignSelf: 'flex-start',
+    paddingHorizontal: Spacing.two,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  promoBadgeText: {
+    fontSize: 10,
+    color: '#FFFFFF',
+  },
+  promoTitle: {
+    fontSize: 15,
+    lineHeight: 20,
+  },
+  promoDesc: {
+    fontSize: 12,
+    lineHeight: 16,
+  },
+  promoIconBg: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sectionHeader: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginTop: Spacing.two,
+    marginBottom: Spacing.one,
+  },
+  servicesGrid: {
+    gap: Spacing.two,
+  },
+  serviceCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: Spacing.three,
+    borderRadius: 12,
+    gap: Spacing.three,
+  },
+  serviceIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  serviceTextContainer: {
+    flex: 1,
+    gap: 2,
+  },
+  serviceDesc: {
+    fontSize: 12,
   },
   sectionsWrapper: {
-    gap: Spacing.five,
-    paddingHorizontal: Spacing.four,
-    paddingTop: Spacing.three,
+    gap: Spacing.two,
+    marginBottom: Spacing.four,
   },
-  collapsibleContent: {
-    alignItems: 'center',
-  },
-  imageTutorial: {
-    width: '100%',
-    aspectRatio: 296 / 171,
-    borderRadius: Spacing.three,
-    marginTop: Spacing.two,
-  },
-  imageReact: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
+  collapsibleText: {
+    lineHeight: 20,
+    marginTop: Spacing.one,
   },
 });
